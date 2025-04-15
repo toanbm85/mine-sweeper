@@ -1,26 +1,25 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-const BOARD_SIZE = 3;
+const BOARD_SIZE = 5;
 
 function App() {
   const [squares, setSquares] = useState(Array(BOARD_SIZE * BOARD_SIZE).fill(null));
-  const [xIsNext, setXIsNext] = useState(true); // true = Player's turn
+  const [xIsNext, setXIsNext] = useState(true);
   const winner = calculateWinner(squares);
 
-  // Khi d?n lu?t máy, t? d?ng choi
   useEffect(() => {
     if (!xIsNext && !winner) {
       const timer = setTimeout(() => {
         makeRandomMove();
-      }, 500); // Delay nh? cho t? nhiên
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [xIsNext, squares, winner]);
 
   const handleClick = (index) => {
     if (squares[index] || winner || !xIsNext) return;
-
     const nextSquares = squares.slice();
     nextSquares[index] = 'X';
     setSquares(nextSquares);
@@ -28,81 +27,79 @@ function App() {
   };
 
   const makeRandomMove = () => {
-    const emptyIndices = squares
-      .map((val, idx) => (val === null ? idx : null))
-      .filter((val) => val !== null);
-
-    if (emptyIndices.length === 0) return;
-
-    const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    const emptyIndexes = squares.map((val, idx) => val === null ? idx : null).filter(i => i !== null);
+    if (emptyIndexes.length === 0) return;
+    const randomIndex = emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)];
     const nextSquares = squares.slice();
     nextSquares[randomIndex] = 'O';
     setSquares(nextSquares);
     setXIsNext(true);
   };
 
-  const renderSquare = (index) => (
-    <div
-      key={index}
-      className={`square ${squares[index] === 'X' ? 'x' : squares[index] === 'O' ? 'o' : ''}`}
-      onClick={() => handleClick(index)}
-    >
-      {squares[index]}
+  const renderSquare = (i) => (
+    <div className={`square ${squares[i] === 'X' ? 'x' : squares[i] === 'O' ? 'o' : ''}`} onClick={() => handleClick(i)}>
+      {squares[i]}
     </div>
   );
 
-  const renderBoard = () => {
-    const board = [];
-    for (let row = 0; row < BOARD_SIZE; row++) {
-      const cols = [];
-      for (let col = 0; col < BOARD_SIZE; col++) {
-        const index = row * BOARD_SIZE + col;
-        cols.push(renderSquare(index));
-      }
-      board.push(
-        <div className="board-row" key={row}>
-          {cols}
-        </div>
-      );
-    }
-    return board;
-  };
-
-  const handleReset = () => {
+  const resetGame = () => {
     setSquares(Array(BOARD_SIZE * BOARD_SIZE).fill(null));
     setXIsNext(true);
   };
 
+  const rows = [];
+  for (let row = 0; row < BOARD_SIZE; row++) {
+    const cols = [];
+    for (let col = 0; col < BOARD_SIZE; col++) {
+      cols.push(renderSquare(row * BOARD_SIZE + col));
+    }
+    rows.push(<div className="board-row" key={row}>{cols}</div>);
+  }
+
   return (
     <div className="game">
       <div className="status">
-        {winner
-          ? `Winner: ${winner}`
-          : squares.every((s) => s !== null)
-          ? 'Draw!'
-          : `Turn: ${xIsNext ? 'You (X)' : 'Computer (O)'}`}
+        {winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`}
       </div>
-      {renderBoard()}
-      <button className="reset" onClick={handleReset}>Reset Game</button>
+      {rows}
+      <button className="reset" onClick={resetGame}>Reset</button>
     </div>
   );
 }
 
-// Function to check for a winner
 function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2], // rows
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6], // columns
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8], // diagonals
-    [2, 4, 6],
-  ];
-  for (let [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+  const lines = [];
+  const winLength = 5;
+
+  // Rows
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j <= BOARD_SIZE - winLength; j++) {
+      lines.push(Array(winLength).fill(0).map((_, k) => i * BOARD_SIZE + j + k));
+    }
+  }
+  // Columns
+  for (let i = 0; i <= BOARD_SIZE - winLength; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      lines.push(Array(winLength).fill(0).map((_, k) => (i + k) * BOARD_SIZE + j));
+    }
+  }
+  // Diagonals (top-left to bottom-right)
+  for (let i = 0; i <= BOARD_SIZE - winLength; i++) {
+    for (let j = 0; j <= BOARD_SIZE - winLength; j++) {
+      lines.push(Array(winLength).fill(0).map((_, k) => (i + k) * BOARD_SIZE + j + k));
+    }
+  }
+  // Diagonals (top-right to bottom-left)
+  for (let i = 0; i <= BOARD_SIZE - winLength; i++) {
+    for (let j = winLength - 1; j < BOARD_SIZE; j++) {
+      lines.push(Array(winLength).fill(0).map((_, k) => (i + k) * BOARD_SIZE + j - k));
+    }
+  }
+
+  for (const line of lines) {
+    const [first, ...rest] = line;
+    if (squares[first] && rest.every(index => squares[index] === squares[first])) {
+      return squares[first];
     }
   }
   return null;
