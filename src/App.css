@@ -56,3 +56,39 @@ h1 {
   cursor: pointer;
   border-radius: 8px;
 }
+/* Cell styles */
+.cell {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold; /* In đậm */
+  border: 1px solid #ccc;
+  cursor: pointer;
+  user-select: none;
+  font-size: 16px;
+  background-color: #e0e0e0;
+}
+
+.cell.revealed {
+  background-color: #f0f0f0;
+}
+
+.cell.flag {
+  background-color: #ffffcc;
+}
+
+.cell.mine {
+  background-color: #ffcccc;
+}
+
+/* Number colors */
+.cell-1 { color: blue; }
+.cell-2 { color: green; }
+.cell-3 { color: red; }
+.cell-4 { color: navy; }
+.cell-5 { color: maroon; }
+.cell-6 { color: turquoise; }
+.cell-7 { color: black; }
+.cell-8 { color: gray; }
