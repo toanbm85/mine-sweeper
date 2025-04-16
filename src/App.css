@@ -2,45 +2,57 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
-  font-family: sans-serif;
+  margin-top: 40px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.board-row {
+h1 {
+  margin-bottom: 10px;
+}
+
+.board {
+  display: inline-block;
+  margin: 20px 0;
+}
+
+.row {
   display: flex;
 }
 
-.square {
-  width: 60px;
-  height: 60px;
-  font-size: 30px;
-  background-color: #fff;
-  border: 1px solid #ddd;
+.cell {
+  width: 40px;
+  height: 40px;
+  background: #d4d4d4;
+  border: 1px solid #999;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 18px;
   cursor: pointer;
+  user-select: none;
 }
 
-.x {
-  color: red;
+.cell.revealed {
+  background: #eee;
+  border-color: #bbb;
 }
 
-.o {
-  color: green;
+.cell.flagged {
+  background: #ffc;
 }
 
 .status {
-  margin-bottom: 10px;
-  font-size: 18px;
   font-weight: bold;
+  margin: 10px;
+  color: #c00;
 }
 
 .reset {
-  margin-top: 20px;
   padding: 10px 20px;
-  background-color: #ddd;
+  background: #4caf50;
   border: none;
-  cursor: pointer;
+  color: white;
   font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
 }
