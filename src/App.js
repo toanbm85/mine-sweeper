@@ -46,13 +46,25 @@ const Cell = ({ cell, onClick, onRightClick }) => {
   let className = 'cell';
   if (cell.revealed) className += ' revealed';
   if (cell.flagged) className += ' flagged';
+  if (cell.revealed && !cell.mine && cell.count > 0) {
+    className += ` cell-${cell.count}`; // Thêm màu cho số
+  }
+
   return (
     <div
       className={className}
       onClick={onClick}
       onContextMenu={onRightClick}
     >
-      {cell.revealed ? (cell.mine ? '💣' : (cell.count || '')) : (cell.flagged ? '🚩' : '')}
+      {cell.revealed
+        ? cell.mine
+          ? '💣'
+          : cell.count > 0
+          ? cell.count
+          : ''
+        : cell.flagged
+        ? '🚩'
+        : ''}
     </div>
   );
 };
